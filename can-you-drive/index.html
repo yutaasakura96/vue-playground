@@ -29,6 +29,10 @@
   <body>
     <div id="app">
       <div>
+        <div>
+          <label>Enter your age: </label>
+          <input v-model="age" />
+        </div>
         <div>{{message}}</div>
         <div>
           Can you drive:
@@ -58,6 +62,7 @@
           return {
             message,
             canDrive,
+            age,
           };
         },
       };
