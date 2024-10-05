@@ -1,31 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Quiz Game</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/normalize.css/normalize.css"
+    />
+    <style type="text/css">
+      body {
+        font-family: monospace;
+        padding: 20px;
+        font-size: 2em;
+      }
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simple Quiz Game</title>
-  <link rel="stylesheet" href="https://unpkg.com/normalize.css/normalize.css">
-  <style type="text/css">
-    body {
-      font-family: monospace;
-      padding: 20px;
-      font-size: 2em;
-    }
+      .can {
+        color: green;
+      }
 
-    .can {
-      color: green;
-    }
+      .cant {
+        color: red;
+      }
+    </style>
+    <script src="https://unpkg.com/vue@3.5.9"></script>
+  </head>
 
-    .cant {
-      color: red;
-    }
-  </style>
-  <script src="https://unpkg.com/vue@3.5.9"></script>
-</head>
+  <body>
+    <div id="app">
+      <!-- Display score if quiz is done, else show "Next Question" -->
+      <div>{{ areWeDone ? 'Your Score: ' + score : 'Next Question' }}</div>
 
-<body>
- 
-</body>
+      <!-- Show the current question if the quiz is not finished -->
+      <div v-if="!areWeDone">{{ question }}</div>
 
+      <!-- Input field for user to type their answer (shown only when quiz is ongoing) -->
+      <div v-if="!areWeDone">
+        <input v-model="answer" />
+      </div>
+    </div>
+    <script>
+      // Importing necessary functions from Vue
+      const { createApp, ref, computed } = Vue;
+
+      const App = {
+        setup() {
+          // Array of questions
+          const questions = [
+            "How much is 2+2",
+            "How much is 3*5+1",
+            "What is the rest from 3/1",
+          ];
+
+          // Array of correct answers for the questions
+          const answers = ["4", "16", "1"];
+
+          // Reactive variables for tracking score, current question index, and user input
+          // User's score
+          const score = ref(0);
+          // Index of the current question
+          const current = ref(0);
+          // User's input answer
+          const answer = ref(null);
+
+          // Computed property to get the current question based on the index
+          const question = computed(() => questions[current.value]);
+
+          // Computed property to get the correct answer for the current question
+          const rightAnswer = computed(() => answers[current.value]);
+
+          // Computed property to determine if the quiz is finished
+          const areWeDone = computed(() => current.value >= questions.length);
+
+          // Function to check if the user's answer is correct
+          const check = () => {
+            // If quiz is not done and the answer is correct, increase score
+            if (!areWeDone.value && answer.value === rightAnswer.value) {
+              score.value++;
+            }
+            // Only proceed to the next question if quiz is still ongoing
+            if (!areWeDone.value) {
+              // Reset the answer input field
+              answer.value = null;
+              // Move to the next question
+              current.value++;
+            }
+            // Stop the interval when the quiz is done
+            if (areWeDone.value) {
+              clearInterval(interval);
+            }
+          };
+
+          // Set up a timed interval to check answers every 5 seconds
+          const interval = setInterval(check, 5000);
+
+          // Return all reactive data to the template
+          return {
+            question,
+            answer,
+            areWeDone,
+            score,
+          };
+        },
+      };
+
+      // Mount the Vue app to the div with id="app"
+      createApp(App).mount("#app");
+    </script>
+  </body>
 </html>
