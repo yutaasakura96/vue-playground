@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Can you Drive?</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/normalize.css/normalize.css"
+    />
+    <style type="text/css">
+      body {
+        font-family: monospace;
+        padding: 20px;
+        font-size: 2em;
+      }
+    </style>
+    <script src="https://unpkg.com/vue@3.5.9"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Can you Drive?</title>
-  <link rel="stylesheet" href="https://unpkg.com/normalize.css/normalize.css">
-  <style type="text/css">
-    body {
-      font-family: monospace;
-      padding: 20px;
-      font-size: 2em;
-    }
-  </style>
-  <!-- <script src="https://unpkg.com/vue@3.4.0"></script> -->
-</head>
-
-<body>
-  <div id="app">
-    <div>
-      {{message}}
+  <body>
+    <div id="app">
+      <div>{{message}}</div>
     </div>
-  </div>
-  <script>
+    <script>
+      const { createApp, ref } = Vue;
+      const App = {
+        setup() {
+          let message = ref("Hello");
 
-  </script>
-</body>
+          setTimeout(() => {
+            console.log("Changed!");
+            message.value = "Bye!";
+          }, 5000);
 
+          return {
+            message,
+          };
+        },
+      };
+
+      createApp(App).mount("#app");
+    </script>
+  </body>
 </html>
