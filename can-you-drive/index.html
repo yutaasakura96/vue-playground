@@ -8,19 +8,44 @@
       rel="stylesheet"
       href="https://unpkg.com/normalize.css/normalize.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    />
     <style type="text/css">
       body {
-        font-family: monospace;
+        font-family: "Roboto", sans-serif;
         padding: 20px;
-        font-size: 2em;
+        font-size: 1.5em;
+        text-align: center;
+      }
+
+      input {
+        padding: 10px;
+        margin-top: 10px;
+        font-size: 1.2em;
       }
 
       .can {
         color: green;
+        font-weight: bold;
+        transition: color 0.5s ease;
       }
 
       .cant {
         color: red;
+        font-weight: bold;
+        transition: color 0.5s ease;
+      }
+
+      .invalid {
+        border-color: red;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          font-size: 1.2em;
+        }
       }
     </style>
     <script src="https://unpkg.com/vue@3.5.9"></script>
@@ -29,35 +54,43 @@
   <body>
     <div id="app">
       <div>
+        <div>{{ message }}</div>
         <div>
-          <label>Enter your age: </label>
-          <input v-model="age" />
+          <label for="ageInput">Enter your age:</label>
+          <input
+            id="ageInput"
+            type="number"
+            v-model="age"
+            :class="{invalid: age < 0 || age >80}"
+            placeholder="Enter age"
+          />
         </div>
-        <div>{{message}}</div>
         <div>
           Can you drive:
-          <span :class="{can: canDrive === 'Yes', cant: canDrive === 'No'}"
-            >{{canDrive}}</span
+          <span :class="{ can: canDrive === 'Yes', cant: canDrive === 'No' }"
+            >{{ canDrive }}</span
           >
         </div>
       </div>
     </div>
     <script>
-      const { createApp, ref, computed } = Vue;
+      const { createApp, ref, computed, watch } = Vue;
       const App = {
         setup() {
-          let message = ref("Hello");
-          let age = ref(null);
-          let canDrive = computed(() => {
-            console.log("Computed");
-            return age.value >= 18 ? "Yes" : "No";
-          });
+          const message = ref("Hello");
+          const age = ref(null);
 
-          setTimeout(() => {
-            console.log("Changed!");
-            message.value = "Bye!";
-            age.value = 24;
-          }, 5000);
+          const canDrive = computed(() => (age.value >= 18 ? "Yes" : "No"));
+
+          // Watch for changes in 'age' and update the message accordingly
+          watch(age, (newAge) => {
+            if (newAge !== null) {
+              message.value =
+                newAge >= 18 ? "You can drive!" : "You cannot drive!";
+            } else {
+              message.value = "Please enter your age.";
+            }
+          });
 
           return {
             message,
