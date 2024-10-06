@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Gallery</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/normalize.css/normalize.css"
+    />
+    <style type="text/css">
+      /* General body styling */
+      body {
+        font-family: monospace;
+        padding: 20px;
+        font-size: 16px;
+      }
+
+      /* Grid layout for gallery */
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 10px;
+      }
+
+      /* Styling for individual photo containers */
+      .photo {
+        position: relative;
+        border: 1px solid #ccc;
+      }
+
+      /* Ensures images take up full container width */
+      .photo img {
+        width: 100%;
+        display: block;
+      }
+
+      /* Favorite button styling */
+      .favorite-button {
+        background: none;
+        border: none;
+        color: #ccc;
+        font-size: 24px;
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        cursor: pointer;
+      }
+
+      /* Gold color applied to the favorite button when active */
+      .favorite-button.active {
+        color: gold;
+      }
+
+      /* Styling for the message when no photos are added */
+      .no-photos {
+        text-align: center;
+        color: #999;
+      }
+
+      /* Form styling */
+      form {
+        margin-bottom: 20px;
+      }
+    </style>
+    <script src="https://unpkg.com/vue@3.4.0"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <!-- Form for Adding Photos -->
+      <form @submit.prevent="addPhoto">
+        <!-- Input field for the image URL, data bound to newPhotoUrl -->
+        <input placeholder="Enter image URL" v-model="newPhotoUrl" />
+        <button type="submit">Add Photo</button>
+      </form>
+
+      <!-- Conditional rendering: Show message if no photos are added -->
+      <p class="no-photos" v-if="photos.length === 0">
+        No photos added yet. Add some!
+      </p>
+
+      <!-- Display the gallery if there are photos -->
+      <div class="gallery" v-else>
+        <!-- Iterate over the photos array and display each photo -->
+        <div class="photo" v-for="(photo, index) in photos" :key="photo.id">
+          <!-- Image tag bound to photo URL, clicking it removes the photo -->
+          <img :src="photo.url" @click="removePhoto(index)" />
+
+          <!-- Favorite button, class is conditionally applied based on isFavorite -->
+          <button
+            class="favorite-button"
+            :class="{ active: photo.isFavorite }"
+            @click="toggleFavorite(photo)"
+          >
+            ★
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const { createApp, ref } = Vue;
+      const App = {
+        setup() {
+          // Reactive array to hold the list of photos
+          const photos = ref([
+            {
+              id: 1,
+              url: "https://plus.unsplash.com/premium_photo-1728014305999-2515a0b4f575?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyfHx8ZW58MHx8fHx8",
+              isFavorite: false,
+            },
+            {
+              id: 2,
+              url: "https://images.unsplash.com/photo-1727968451338-209fb8da01a3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwzfHx8ZW58MHx8fHx8",
+              isFavorite: false,
+            },
+            {
+              id: 3,
+              url: "https://images.unsplash.com/photo-1726767305248-e3cfaf9c98b7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxMnx8fGVufDB8fHx8fA%3D%3D",
+              isFavorite: false,
+            },
+          ]);
+          // Reactive variable to hold the new photo URL from the input form
+          const newPhotoUrl = ref("");
+
+          // Function to add a new photo to the gallery
+          const addPhoto = () => {
+            // Create a new photo object with id, URL, and isFavorite flag
+            const photo = {
+              id: photos.value.length + 1,
+              url: newPhotoUrl.value,
+              isFavorite: false,
+            };
+            // Add the new photo if the URL is not empty
+            if (newPhotoUrl.value !== "") {
+              photos.value.push(photo);
+              // Reset the input field
+              newPhotoUrl.value = "";
+            }
+          };
+
+          // Function to toggle the favorite status of a photo
+          const toggleFavorite = (photo) => {
+            // Toggle the isFavorite property of the photo
+            photo.isFavorite = !photo.isFavorite;
+          };
+
+          // Function to remove a photo from the gallery by its index
+          const removePhoto = (index) => {
+            // Remove the photo from the array
+            photos.value.splice(index, 1);
+          };
+
+          // Return the reactive variables and methods for use in the template
+          return {
+            addPhoto,
+            photos,
+            newPhotoUrl,
+            toggleFavorite,
+            removePhoto,
+          };
+        },
+      };
+
+      // Create and mount the Vue app
+      createApp(App).mount("#app");
+    </script>
+  </body>
+</html>
