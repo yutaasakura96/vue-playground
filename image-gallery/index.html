@@ -59,11 +59,43 @@
   </head>
 
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- Form for Adding Photos -->
+      <!-- <form> -->
+      <input placeholder="Enter image URL" />
+      <button type="submit" @click="addPhoto">Add Photo</button>
+      <!-- </form> -->
+
+      <!-- Conditional Rendering -->
+      <p class="no-photos">No photos added yet. Add some!</p>
+
+      <div class="gallery">
+        <!-- List Rendering and Conditional Class Binding -->
+        <div class="photo">
+          <!-- An image goes here -->
+          <button class="favorite-button">★</button>
+        </div>
+      </div>
+    </div>
 
     <script>
       const { createApp, ref } = Vue;
-      const App = {};
+      const App = {
+        setup() {
+          // Keep track of the list of photos
+          // We need a ref for the currently entered URL
+          const addPhoto = () => {
+            console.log('I was clicked!')
+          };
+          const toggleFavorite = () => {
+            // Favorite toggling logic
+          };
+
+          return {
+            addPhoto
+          };
+        },
+      };
       createApp(App).mount("#app");
     </script>
   </body>
