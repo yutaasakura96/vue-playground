@@ -74,10 +74,10 @@
       </form>
 
       <!-- Task filtering -->
-      <input placeholder="Filter tasks..." />
+      <input placeholder="Filter tasks..." v-model="filterText" />
 
-      <!-- If there no tasks -->
-      <div v-if="tasks.length === 0">
+      <!-- If there are no tasks -->
+      <div v-if="filteredTasks.length === 0">
         <p>No tasks found. Try changing the filter or add some tasks!</p>
       </div>
 
@@ -85,7 +85,7 @@
         <h3>Your Tasks</h3>
         <!-- This is a list of tasks -->
         <div
-          v-for="(task, index) in tasks"
+          v-for="(task, index) in filteredTasks"
           :key="task.id"
           :class="{'task': true, completed: task.done, [task.priority.toLowerCase()]: true}"
         >
@@ -93,7 +93,7 @@
             <!-- Is task done? -->
             <input type="checkbox" v-model="task.done" />
             <!-- Task description -->
-            <span>{{task.description}}</span>
+            <span>{{ task.description }}</span>
           </div>
           <!-- Removing a task -->
           <button class="remove-button" @click="removeTask(index)">✖</button>
@@ -102,16 +102,15 @@
     </div>
 
     <script>
-      const { createApp, onMounted, onBeforeMount, ref, watch, watchEffect } =
-        Vue;
+      const { createApp, onMounted, ref, watch, computed } = Vue;
 
       const App = {
         setup() {
           const tasks = ref(JSON.parse(localStorage.getItem("tasks") ?? "[]"));
-
           const newTaskInput = ref(null);
           const newTask = ref("");
           const newPriority = ref("");
+          const filterText = ref("");
 
           onMounted(() => {
             newTaskInput.value.focus();
@@ -142,6 +141,15 @@
             { deep: true }
           );
 
+          // Correct filteredTasks definition
+          const filteredTasks = computed(() =>
+            tasks.value.filter((task) =>
+              task.description
+                .toLowerCase()
+                .includes(filterText.value.toLowerCase())
+            )
+          );
+
           return {
             newTaskInput,
             tasks,
@@ -149,6 +157,8 @@
             newTask,
             newPriority,
             removeTask,
+            filterText,
+            filteredTasks,
           };
         },
       };
