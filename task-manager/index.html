@@ -102,19 +102,12 @@
     </div>
 
     <script>
-      const { createApp, onMounted, onBeforeMount, ref } = Vue;
+      const { createApp, onMounted, onBeforeMount, ref, watch, watchEffect } =
+        Vue;
 
       const App = {
         setup() {
-          const tasks = ref([
-            // Dummy tasks for rendering
-            {
-              id: 1,
-              description: "Buy Groceries",
-              priority: "Low",
-              done: false,
-            },
-          ]);
+          const tasks = ref(JSON.parse(localStorage.getItem("tasks") ?? "[]"));
 
           const newTaskInput = ref(null);
           const newTask = ref("");
@@ -136,6 +129,15 @@
               newPriority.value = "";
             }
           };
+
+          watch(
+            tasks,
+            () => {
+              localStorage.setItem("tasks", JSON.stringify(tasks.value));
+            },
+            { deep: true }
+          );
+
           return {
             newTaskInput,
             tasks,
