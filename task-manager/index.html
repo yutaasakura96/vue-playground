@@ -85,7 +85,7 @@
         <h3>Your Tasks</h3>
         <!-- This is a list of tasks -->
         <div
-          v-for="task in tasks"
+          v-for="(task, index) in tasks"
           :key="task.id"
           :class="{'task': true, completed: task.done, [task.priority.toLowerCase()]: true}"
         >
@@ -96,7 +96,7 @@
             <span>{{task.description}}</span>
           </div>
           <!-- Removing a task -->
-          <button class="remove-button" @click="removeTask(task.id)">✖</button>
+          <button class="remove-button" @click="removeTask(index)">✖</button>
         </div>
       </div>
     </div>
@@ -130,11 +130,8 @@
             }
           };
 
-          const removeTask = (id) => {
-            const index = tasks.value.findIndex((task) => task.id === id);
-            if (index !== -1) {
-              tasks.value.splice(index, 1);
-            }
+          const removeTask = (index) => {
+            tasks.value.splice(index, 1);
           };
 
           watch(
