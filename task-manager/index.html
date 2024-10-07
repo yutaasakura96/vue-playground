@@ -96,7 +96,7 @@
             <span>{{task.description}}</span>
           </div>
           <!-- Removing a task -->
-          <button class="remove-button">✖</button>
+          <button class="remove-button" @click="removeTask(task.id)">✖</button>
         </div>
       </div>
     </div>
@@ -130,6 +130,13 @@
             }
           };
 
+          const removeTask = (id) => {
+            const index = tasks.value.findIndex((task) => task.id === id);
+            if (index !== -1) {
+              tasks.value.splice(index, 1);
+            }
+          };
+
           watch(
             tasks,
             () => {
@@ -144,6 +151,7 @@
             addTask,
             newTask,
             newPriority,
+            removeTask,
           };
         },
       };
