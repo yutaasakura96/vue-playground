@@ -9,6 +9,7 @@
       href="https://unpkg.com/normalize.css/normalize.css"
     />
     <style type="text/css">
+      /* General body styling */
       body {
         font-family: "Arial", sans-serif;
         padding: 20px;
@@ -16,6 +17,7 @@
         background-color: #f4f4f9;
       }
 
+      /* Styling for individual tasks */
       .task {
         display: flex;
         align-items: center;
@@ -27,6 +29,7 @@
         border-left: 5px solid;
       }
 
+      /* Priority-based task border colors */
       .high {
         border-color: red;
       }
@@ -39,11 +42,13 @@
         border-color: green;
       }
 
+      /* Styling for completed tasks */
       .completed {
         text-decoration: line-through;
         color: #bbb;
       }
 
+      /* Remove button styling */
       .remove-button {
         color: red;
         cursor: pointer;
@@ -57,13 +62,14 @@
 
   <body>
     <div id="app">
+      <!-- Form for adding a new task -->
       <form @submit.prevent="addTask">
-        <!-- Adding tasks form -->
         <input
           ref="newTaskInput"
           placeholder="Add new task"
           v-model="newTask"
         />
+        <!-- Priority selector for the new task -->
         <select v-model="newPriority">
           <option disabled value="">Select priority</option>
           <option>High</option>
@@ -73,29 +79,34 @@
         <button type="submit">Add Task</button>
       </form>
 
-      <!-- Task filtering -->
+      <!-- Input field for filtering tasks based on text -->
       <input placeholder="Filter tasks..." v-model="filterText" />
 
-      <!-- If there are no tasks -->
+      <!-- Conditional rendering: Show message if no tasks match the filter -->
       <div v-if="filteredTasks.length === 0">
         <p>No tasks found. Try changing the filter or add some tasks!</p>
       </div>
 
+      <!-- Display task list if there are tasks -->
       <div v-else>
         <h3>Your Tasks</h3>
-        <!-- This is a list of tasks -->
+        <!-- Iterate through filtered tasks and display each task -->
         <div
           v-for="(task, index) in filteredTasks"
           :key="task.id"
-          :class="{'task': true, completed: task.done, [task.priority.toLowerCase()]: true}"
+          :class="{
+            'task': true,
+            completed: task.done,
+            [task.priority.toLowerCase()]: true
+          }"
         >
           <div>
-            <!-- Is task done? -->
+            <!-- Checkbox to mark task as completed -->
             <input type="checkbox" v-model="task.done" />
             <!-- Task description -->
             <span>{{ task.description }}</span>
           </div>
-          <!-- Removing a task -->
+          <!-- Button to remove task -->
           <button class="remove-button" @click="removeTask(index)">✖</button>
         </div>
       </div>
@@ -106,33 +117,48 @@
 
       const App = {
         setup() {
+          // Reactive reference to store tasks, fetched from localStorage or empty array
           const tasks = ref(JSON.parse(localStorage.getItem("tasks") ?? "[]"));
+
+          // Reference to the input field for the new task
           const newTaskInput = ref(null);
+
+          // Reactive variable for the task description input
           const newTask = ref("");
+
+          // Reactive variable for the task priority
           const newPriority = ref("");
+
+          // Reactive variable for task filtering
           const filterText = ref("");
 
+          // Focus the input field for adding new tasks when the component mounts
           onMounted(() => {
             newTaskInput.value.focus();
           });
 
+          // Function to add a new task to the list
           const addTask = () => {
             if (newTask.value !== "" && newPriority.value !== "") {
+              // Add the new task object to the beginning of the task list
               tasks.value.unshift({
                 id: tasks.value.length + 1,
                 description: newTask.value,
                 priority: newPriority.value,
-                done: false,
+                done: false, // Task is initially not done
               });
+              // Clear the input fields after adding the task
               newTask.value = "";
               newPriority.value = "";
             }
           };
 
+          // Function to remove a task by index
           const removeTask = (index) => {
-            tasks.value.splice(index, 1);
+            tasks.value.splice(index, 1); // Remove the task from the array
           };
 
+          // Watch the tasks array and store changes in localStorage
           watch(
             tasks,
             () => {
@@ -141,7 +167,7 @@
             { deep: true }
           );
 
-          // Correct filteredTasks definition
+          // Computed property for filtering tasks based on input text
           const filteredTasks = computed(() =>
             tasks.value.filter((task) =>
               task.description
@@ -150,6 +176,7 @@
             )
           );
 
+          // Return all reactive data and functions for use in the template
           return {
             newTaskInput,
             tasks,
@@ -163,6 +190,7 @@
         },
       };
 
+      // Create and mount the Vue app
       createApp(App).mount("#app");
     </script>
   </body>
