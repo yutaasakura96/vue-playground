@@ -27,8 +27,9 @@ app.component("product-display", {
         <li v-for="detail in details">{{ detail }}</li>
       </ul>
       <h3>Sizes</h3>
-      <product-details :details='details'></product-details>
+      <product-details :details='sizes'></product-details>
       <h3>Available Colors</h3>
+      <div class="color-circle-container">
       <div
         v-for="(variant, index) in variants"
         :key="variant.id"
@@ -36,6 +37,7 @@ app.component("product-display", {
         class="color-circle"
         :style="{ backgroundColor: variant.color }"
       ></div>
+      </div>
       <button
         class="button"
         @click="addToCart()"

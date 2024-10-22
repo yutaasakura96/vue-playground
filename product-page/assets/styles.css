@@ -41,6 +41,18 @@ body {
   cursor: pointer;
 }
 
+.color-circle-container{
+  display: flex;
+  justify-content: space-between;
+  width: 120px;
+}
+
+.sizes-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100px;
+  margin-bottom: 20px;
+}
 
 .disabledButton {
   background-color: #d8d8d8;
